@@ -30,7 +30,7 @@ async function Dashboard({data}) {
         </tr>
       </thead>
       <tbody>
-       {Object.values(data).map((item,i)=><tr key={i} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+       {data && Object.values(data).map((item,i)=><tr key={i} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
           <th
             scope="row"
             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -40,7 +40,7 @@ async function Dashboard({data}) {
           <td className="px-6 py-4">{item.roll}</td>
           <td className="px-6 py-4">{item.section}</td>
           <td className="px-6 py-4">{item.phone}</td>
-          <td className="px-6 py-4">{item.phone}</td>
+          <td className="px-6 py-4">{item.section1} / {item.section2} / {item.section3} / {item.section4}</td>
           <td className="px-6 py-4">
             <a
               href="#"

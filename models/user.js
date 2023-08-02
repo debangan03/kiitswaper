@@ -37,9 +37,31 @@ const userSchema = new mongoose.Schema({
     },
     section: {
         type: String,
-        required:true,
+        default:"",
 
     },
+    section1: {
+        type: String,
+        default:"",
+
+    },
+    section2: {
+        type: String,
+        default:"",
+        default:"",
+
+    },
+    section3: {
+        type: String,
+        default:"",
+
+    },
+    section4: {
+        type: String,
+        default:"",
+
+    },
+    
 
 
 }, { timestamps: true })
