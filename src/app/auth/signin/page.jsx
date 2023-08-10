@@ -7,7 +7,6 @@ import img from "../../Images/icons.png";
 
 async function page() {
   const providers = await getProviders();
-  console.log(providers);
   return (
     <div>
       <div>

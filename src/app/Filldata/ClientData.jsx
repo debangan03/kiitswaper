@@ -1,20 +1,14 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useEffect } from "react";
-import Link from "next/link";
+
 
 function ClientData({ login,response }) {
-  const [fill, setfill] = useState(true);
-  useEffect(() => {
-    if (response.msg == "Found") {
-      setfill(false);
-    }
-  }, []);
 
+  const router = useRouter();
   const [name, setname] = useState("");
   const [phone, setphone] = useState("");
   const [roll, setroll] = useState("");
@@ -23,6 +17,14 @@ function ClientData({ login,response }) {
   const [semester, setsemester] = useState("");
   const [section, setsection] = useState("");
   const [disable, setdisable] = useState(true);
+  useEffect(() => {
+    if(response.msg=="Found"){
+      router.push('http://localhost:3000') 
+    }
+    return () => { 
+    }
+  }, [])
+  
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -75,7 +77,7 @@ function ClientData({ login,response }) {
       body: JSON.stringify(data),
     });
     let response = await res.json();
-    console.log(response.success);
+
 
     if (response.success === "true") {
       setname("");
@@ -97,11 +99,12 @@ function ClientData({ login,response }) {
         theme: "light",
       });
       setTimeout(() => {
-        // router.push("/");
-        window.location.reload();
+        router.push('http://localhost:3000')
       }, 1500);
     }
   };
+
+
   return (
     <>
       <ToastContainer
@@ -116,13 +119,12 @@ function ClientData({ login,response }) {
         pauseOnHover
         theme="light"
       />
-      {fill && (
         <>
           <h1 className="my-10 text-center text-2xl font-semibold">
             Enter your details here
           </h1>
           <hr className="w-[40%] mx-auto border-2 border-blue-500" />
-          <form className="w-[50vw] mx-auto my-10">
+          <form className="w-[50vw] mx-auto my-10" onSubmit={submitres}>
             <div className="relative z-0 w-full mb-6 group">
               <input
                 value={name}
@@ -146,7 +148,6 @@ function ClientData({ login,response }) {
                 value={phone}
                 onChange={handleChange}
                 type="tel"
-                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                 name="phone"
                 id="floating_phone"
                 className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -223,7 +224,6 @@ function ClientData({ login,response }) {
                   value={semester}
                   onChange={handleChange}
                   type="tel"
-                  pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                   name="semester"
                   id="floating_phone"
                   className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -258,9 +258,8 @@ function ClientData({ login,response }) {
             </div>
             <div className="flex justify-center">
               <button
-                type="button"
+                type="submit"
                 disabled={disable}
-                onClick={submitres}
                 className="disabled:bg-blue-400 disabled:cursor-not-allowed text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-[0.7rem] w-full [0.7rem]:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Submit
@@ -271,30 +270,7 @@ function ClientData({ login,response }) {
             </p>
           </form>
         </>
-      )}
-      {!fill && (
-        <div className="my-60">
-          <h1 className="text-3xl font-bold text-black text-center">
-            You have already filled your data
-          </h1>
-          <p className="text-[0.7rem] font-normal text-center text-slate-700 my-4">
-            Now, if you want to apply for swapping section, then please click
-            Continue or skip to visit Dashboard
-          </p>
-          <div className="flex justify-center items-center space-x-5">
-            <Link href={"/SectionData"}>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-800 ">
-                Continue &rarr;
-              </button>
-            </Link>
-            <Link href={"/"}>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-800">
-                Skip &rarr;
-              </button>
-            </Link>
-          </div>
-        </div>
-      )}
+      
     </>
   );
 }

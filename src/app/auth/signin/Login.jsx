@@ -14,8 +14,7 @@ function Login({providers}) {
             <button
               onClick={() => {
                 signIn(item.id, {
-                  callbackUrl:
-                    process.env.VERCEL_URL || "http://localhost:3000/Filldata",
+                  callbackUrl:"http://localhost:3000/Filldata",
                 });
               }}
               className="bg-blue-600 flex items-center  hover:bg-indigo-600 rounded-md  text-white p-2"

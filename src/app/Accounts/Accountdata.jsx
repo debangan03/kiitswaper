@@ -1,9 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Accountdata({ login ,data}) {
+  const router=useRouter()
   const [names, setnames] = useState("");
   const [phone, setphone] = useState("");
   const [roll, setroll] = useState("");
@@ -64,7 +66,6 @@ function Accountdata({ login ,data}) {
       body: JSON.stringify(data),
     });
     let response = await res.json();
-    console.log(response.success);
 
     if (response.success === "true") {
 
@@ -79,7 +80,8 @@ function Accountdata({ login ,data}) {
         theme: "light",
       });
       setTimeout(() => {
-        window.location.reload()
+        //window.location.reload()
+        router.push("http://localhost:3000/Accounts")
       }, 1500);
     }
   }

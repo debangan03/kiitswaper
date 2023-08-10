@@ -10,8 +10,8 @@ function UpdateData({ login }) {
   const [section, setsection] = useState("");
   const [section1, setsection1] = useState("");
   const [section2, setsection2] = useState("empty");
-  const [section3, setsection3] = useState("tmpty");
-  const [section4, setsection4] = useState("tmpty");
+  const [section3, setsection3] = useState("empty");
+  const [section4, setsection4] = useState("empty");
   const [disable, setdisable] = useState(true);
 
   const handleChange=(e)=>{
@@ -69,7 +69,6 @@ function UpdateData({ login }) {
       body: JSON.stringify(data),
     });
     let response = await res.json();
-    console.log(response.success);
 
     if (response.success === "true") {
       setsection("");
@@ -115,6 +114,7 @@ function UpdateData({ login }) {
               <input
                 onChange={handleChange}
                 type="text"
+                value={section}
                 name="section"
                 id="floating_company"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -132,6 +132,7 @@ function UpdateData({ login }) {
               <input
                 onChange={handleChange}
                 type="text"
+                value={section1}
                 name="section1"
                 id="floating_company"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -151,6 +152,7 @@ function UpdateData({ login }) {
               <input
                 onChange={handleChange}
                 type="text"
+                
                 name="section2"
                 id="floating_company"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -168,6 +170,7 @@ function UpdateData({ login }) {
               <input
                 onChange={handleChange}
                 type="text"
+                
                 name="section3"
                 id="floating_company"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -185,6 +188,7 @@ function UpdateData({ login }) {
               <input
                 onChange={handleChange}
                 type="text"
+                
                 name="section4"
                 id="floating_company"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"

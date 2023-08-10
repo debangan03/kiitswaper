@@ -5,7 +5,6 @@ const handler = async (req, res) => {
         
         try {
             const users=await User.findOne({email:req.body.email})
-            console.log(users.section1);
             if(users.section1!="empty"){
                 
                 res.status(200).json({success:"true",msg:"Found"})

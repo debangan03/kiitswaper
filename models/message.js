@@ -14,6 +14,9 @@ const messageSchema = new mongoose.Schema({
     message: {
         type:String,
     },
+    reciever: {
+        type: String,
+    },
 }, { timestamps: true })
 
 export default mongoose.models.Message || mongoose.model("Message", messageSchema)

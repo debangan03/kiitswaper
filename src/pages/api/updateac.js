@@ -2,7 +2,6 @@ import User from "../../../models/user";
 import conndb from "../../../middleware/mongoose";
 const handler = async (req, res) => {
     if (req.method == "POST") {
-        console.log(req.body);
         const {email,phone,year,semester,section}=req.body
         try {
             const users=await User.findOneAndUpdate({email:email},{phone:phone,year:year,semester:semester,section:section})

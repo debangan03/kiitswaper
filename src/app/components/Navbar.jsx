@@ -6,22 +6,20 @@ import LoginNav from "./LoginNav";
 
 async function Navbar() {
   const login = await getServerSession();
-  let response1
+  let response1;
   if(login){
-  const res1 = await fetch("http://localhost:3000/api/getmessage", {
+  response1 = await fetch("http://localhost:3000/api/getmessage", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email: login.user.email }),
-  });
-
-  response1 = await res1.json();
+    body: JSON.stringify({ reciever: login.user.email }),
+  }).then((res)=>res.json());
 }
   if (login) {
-    return <LoginNav login={login} data={response1}/>;
+    return <LoginNav login={login} data={response1}/>
   } else {
-    return <LogoutNav />;
+    return <LogoutNav />
   }
 }
 

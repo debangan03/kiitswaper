@@ -4,19 +4,19 @@ const handler = async (req, res) => {
     if (req.method == "POST") {
         
         try {
-            const { name,email,section,message } = req.body;
-            console.log(req.body);
+            const { name,email,section,message,reciever } = req.body;
 
             const m = new Message({
                 name:name,
                 email:email, 
                 section:section,
-                message:message
+                message:message,
+                reciever:reciever
             });
 
             const m1 = await m.save();
-            console.log(m1);
             res.status(201).json({success:"true",data:m1});
+            //serverPusher.trigger('messages','new-message',m1);
         } catch (error) {
             res.status(400).send({success:"false", error: "erroe" });
         }
