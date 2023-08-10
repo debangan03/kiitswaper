@@ -37,28 +37,27 @@ const userSchema = new mongoose.Schema({
     },
     section: {
         type: String,
-        default:"",
+        required:true,
 
     },
     section1: {
         type: String,
-        default:"",
+        default:"empty",
 
     },
     section2: {
         type: String,
-        default:"",
-        default:"",
+        default:"empty",
 
     },
     section3: {
         type: String,
-        default:"",
+        default:"empty",
 
     },
     section4: {
         type: String,
-        default:"",
+        default:"empty",
 
     },
     

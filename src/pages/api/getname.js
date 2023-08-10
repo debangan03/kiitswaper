@@ -5,13 +5,7 @@ const handler = async (req, res) => {
         
         try {
             const users=await User.findOne({email:req.body.email})
-            
-            if(users){
-                res.status(200).json({success:"true",msg:"Found"})
-            }
-            else{
-                res.status(200).json({success:"false",msg:"Not Found"})
-            }
+            res.status(200).json({user:users})
         } catch (error) {
             res.status(400).send({success:"false", error: error });
         }

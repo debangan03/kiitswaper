@@ -1,27 +1,28 @@
-import React from 'react'
-import {BiSearch} from 'react-icons/bi'
-import {MdAccountCircle} from 'react-icons/Md'
+import React from "react";
 import { getServerSession } from "next-auth";
-import Link from 'next/link'
-import Signout from '../Signout'
-import LogoutNav from './LogoutNav';
-import LoginNav from './LoginNav';
 
+import LogoutNav from "./LogoutNav";
+import LoginNav from "./LoginNav";
 
-async function Navbar(){
-    const login = await getServerSession();
-    if(login){
-    return (
-        <LoginNav/>
+async function Navbar() {
+  const login = await getServerSession();
+  let response1
+  if(login){
+  const res1 = await fetch("http://localhost:3000/api/getmessage", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email: login.user.email }),
+  });
 
-    )
+  response1 = await res1.json();
 }
-else{
-    return (
-        <LogoutNav/>
-
-    )
-}
+  if (login) {
+    return <LoginNav login={login} data={response1}/>;
+  } else {
+    return <LogoutNav />;
+  }
 }
 
 export default Navbar;

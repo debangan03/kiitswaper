@@ -6,7 +6,21 @@ import Dashboard from './Dashboard';
 
 export default async function Home() {
   const login = await getServerSession();
+  console.log(login);
+
+  let dataSwap
+  if(login){
+    let dSwap = await fetch('http://localhost:3000/api/getSwapDetails',{
+      method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({email:login.user.email}),
+    })
+    dataSwap=await dSwap.json()
+  }
   const data = await fetch('http://localhost:3000/api/getUsers')
+  
   const res = await data.json()
   const data1=res.data
   if(!login){
@@ -16,7 +30,7 @@ export default async function Home() {
   else{
     return(
       <>
-      <Dashboard data={data1}/>
+      <Dashboard data={data1} swap={dataSwap} login={login}/>
       </>
     )
   }

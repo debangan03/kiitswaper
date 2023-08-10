@@ -1,21 +1,57 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 
 function UpdateData({ login }) {
-  const router = useRouter();
+  const router=useRouter()
   const [section, setsection] = useState("");
   const [section1, setsection1] = useState("");
-  const [section2, setsection2] = useState("");
-  const [section3, setsection3] = useState("");
-  const [section4, setsection4] = useState("");
+  const [section2, setsection2] = useState("empty");
+  const [section3, setsection3] = useState("tmpty");
+  const [section4, setsection4] = useState("tmpty");
+  const [disable, setdisable] = useState(true);
+
+  const handleChange=(e)=>{
+    e.preventDefault()
+    if(e.target.name==="section")
+    {
+      setsection(e.target.value)
+    }
+    if(e.target.name==="section1")
+    {
+      setsection1(e.target.value)
+    }
+    if(e.target.name==="section2")
+    {
+      setsection2(e.target.value)
+    }
+    if(e.target.name==="section3")
+    {
+      setsection3(e.target.value)
+    }
+    if(e.target.name==="section4")
+    {
+      setsection4(e.target.value)
+    }
+
+    if(section && section1)
+    {
+      setdisable(false)
+    }
+  }
 
   const submitupdate = async (e) => {
     let email = login.user.email;
     e.preventDefault();
+    if(!section2)
+    {setsection2("empty")}
+    if(!section3)
+    {setsection3("empty")}
+    if(!section4)
+    {setsection4("empty")}
     const data = {
       email: email,
       section: section,
@@ -38,9 +74,9 @@ function UpdateData({ login }) {
     if (response.success === "true") {
       setsection("");
       setsection1("");
-      setsection2("");
-      setsection3("");
-      setsection4("");
+      setsection2("empty");
+      setsection3("empty");
+      setsection4("empty");
 
       toast.success("Congrats! Your data for section swap is updated..", {
         position: "bottom-left",
@@ -53,7 +89,7 @@ function UpdateData({ login }) {
         theme: "light",
       });
       setTimeout(() => {
-        router.push("/");
+        router.push("/")
       }, 1500);
     }
   }
@@ -77,11 +113,9 @@ function UpdateData({ login }) {
           <div className="flex md:flex-cols md:space-x-5 md:px-96 flex-rows items-center">
             <div className="relative z-0 w-full mb-6 group">
               <input
-                onChange={(e) => {
-                  setsection(e.target.value);
-                }}
+                onChange={handleChange}
                 type="text"
-                name="floating_company"
+                name="section"
                 id="floating_company"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
@@ -96,11 +130,9 @@ function UpdateData({ login }) {
             </div>
             <div className="relative z-0 w-full mb-6 group">
               <input
-                onChange={(e) => {
-                  setsection1(e.target.value);
-                }}
+                onChange={handleChange}
                 type="text"
-                name="floating_company"
+                name="section1"
                 id="floating_company"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
@@ -117,11 +149,9 @@ function UpdateData({ login }) {
           <div className="grid md:grid-cols-3 md:gap-6 my-4 mx-auto px-96">
             <div className="relative z-0 w-full mb-6 group">
               <input
-                onChange={(e) => {
-                  setsection2(e.target.value);
-                }}
+                onChange={handleChange}
                 type="text"
-                name="floating_company"
+                name="section2"
                 id="floating_company"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
@@ -136,11 +166,9 @@ function UpdateData({ login }) {
             </div>
             <div className="relative z-0 w-full mb-6 group">
               <input
-                onChange={(e) => {
-                  setsection3(e.target.value);
-                }}
+                onChange={handleChange}
                 type="text"
-                name="floating_company"
+                name="section3"
                 id="floating_company"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
@@ -155,11 +183,9 @@ function UpdateData({ login }) {
             </div>
             <div className="relative z-0 w-full mb-6 group">
               <input
-                onChange={(e) => {
-                  setsection4(e.target.value);
-                }}
+                onChange={handleChange}
                 type="text"
-                name="floating_company"
+                name="section4"
                 id="floating_company"
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                 placeholder=" "
@@ -175,13 +201,17 @@ function UpdateData({ login }) {
           </div>
           <div className="flex justify-center">
             <button
-              className="my-8 bg-blue-600 text-white hover:bg-blue-800 px-4 py-2 rounded-md"
+              className="disabled:bg-blue-400 disabled:cursor-not-allowed my-8 bg-blue-600 text-white hover:bg-blue-800 px-4 py-2 rounded-md"
               type="button"
+              disabled={disable}
               onClick={submitupdate}
             >
               Submit
             </button>
           </div>
+          <p className="text-center text-[0.75rem] my-1 text-red-500">
+          *First two fields are required
+        </p>
         </form>
       </>
     );
