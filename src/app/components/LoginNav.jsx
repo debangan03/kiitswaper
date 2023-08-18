@@ -11,21 +11,63 @@ import { BsHandThumbsUp, BsHandThumbsDown } from "react-icons/bs";
 
 function LoginNav({ login, data }) {
   //console.log(data.data);
-  const msg_Array = data.data;
-  // console.log(msg_Array);
+  let msg_Array = [],
+    i;
+  if (data) {
+    for (i in data.data) {
+      if (data.data[i].status != true) {
+        msg_Array.push(data.data[i]);
+      }
+    }
+  }
   //msg_Array.map((item)=>console.log(item.message))
   const [dropdown, setdropdown] = useState(false);
   const [open, setopen] = useState(false);
 
-  // useEffect(() => {
-  //   //Implementing the setInterval method
-  //   const interval = setInterval(() => {
-  //     getnotification()
-  //   }, 1000);
+  const accept = async (item) => {
+    let res = await fetch(`/api/updatemessage`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: item.email, reciever: item.reciever }),
+    });
+    let response = await res.json();
+    let res1 = await fetch(`/api/addswapuser`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: item.email, reciever: item.reciever }),
+    });
+    let response1 = await res1.json();
+    
+    if (response.success && response1.success) {
+      toast.success("swap success!!", {
+        position: "bottom-left",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+      setTimeout(() => {
+        signOut({
+          callbackUrl: process.env.VERCEL_URL || "http://localhost:3000/SwapConfirm",
+        });
+      }, 500);
+    }
+  };
 
-  //   //Clearing the interval
-  //   return () => clearInterval(interval);
-  // }, []);
+  const [nomessage, setnomessage] = useState(true);
+
+  useEffect(() => {
+    if (msg_Array.length != 0) {
+      setnomessage(false);
+    }
+  }, []);
 
   const logout = () => {
     toast.success("Logging you out!!", {
@@ -63,7 +105,10 @@ function LoginNav({ login, data }) {
           <div>
             {msg_Array != undefined &&
               msg_Array.map((item, i) => (
-                <div className="px-4 py-2 text-[#c0e74d] bg-slate-700 m-1 rounded">
+                <div
+                  key={i}
+                  className="px-4 py-2 text-[#c0e74d] bg-slate-700 m-1 rounded"
+                >
                   <p
                     className="px-4 py-2 text-[0.9rem] text-[#c0e74d] bg-slate-700 m-1 rounded"
                     key={i}
@@ -73,7 +118,9 @@ function LoginNav({ login, data }) {
                   <div className="flex items-center justify-center space-x-4">
                     <div className="flex items-center justify-center space-x-2  hover:text-green-300 text-green-600 cursor-pointer">
                       <BsHandThumbsUp className="text-lg " />{" "}
-                      <span className="t">Accept</span>{" "}
+                      <span className="t" onClick={() => accept(item)}>
+                        Accept
+                      </span>{" "}
                     </div>
                     <div className=" flex items-center justify-center space-x-2 hover:text-red-300 text-red-500 cursor-pointer">
                       <BsHandThumbsDown className="text-lg" />{" "}
@@ -82,7 +129,7 @@ function LoginNav({ login, data }) {
                   </div>
                 </div>
               ))}
-            {message==undefined && (
+            {nomessage && (
               <div className="px-4 py-2 text-[#c0e74d] bg-slate-700 m-1 rounded">
                 <p className="px-4 py-2 text-[0.9rem] text-[#c0e74d] bg-slate-700 m-1 rounded">
                   No Messages Yet
@@ -103,21 +150,21 @@ function LoginNav({ login, data }) {
             KIIT-Swapper
           </Link>
           <div className="ml-5 flex w-[90%] md:w-[30%] items-center justify-between">
-            <input
+            {/* <input
               type="search"
               className="relative m-0 block w-[1px] min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none motion-reduce:transition-none "
               placeholder="Search"
               aria-label="Search"
               aria-describedby="button-addon2"
-            />
+            /> */}
             {/*Search icon*/}
-            <div className="flex items-center justify-center space-x-3">
-              <span
+            <div className="flex mx-auto items-center md:mx-0 md:ml-auto space-x-3">
+              {/* <span
                 className="input-group-text flex items-center whitespace-nowrap rounded px-3 py-1.5 text-center font-normal text-2xl text-neutral-700 dark:text-neutral-200"
                 id="basic-addon2"
               >
                 <BiSearch />
-              </span>
+              </span> */}
               {open && (
                 <span
                   className="input-group-text z-40 flex items-center whitespace-nowrap rounded px-3 py-1.5 text-center font-normal text-2xl text-neutral-700 dark:text-neutral-200"

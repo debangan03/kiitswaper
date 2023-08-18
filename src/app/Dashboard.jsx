@@ -5,13 +5,15 @@ import { useState } from "react";
 import { GiCancel } from "react-icons/Gi";
 import { SiGmail } from "react-icons/Si";
 import { RiWhatsappFill } from "react-icons/ri";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Dashboard({ data, swap, login }) {
   const user_array = [];
   let i, j;
   let dis = false;
   for (i in data) {
-    if (data[i].email != login.user.email) {
+    if (data[i].email != login.user.email ) {
       user_array.push(data[i]);
     }
   }
@@ -22,11 +24,14 @@ function Dashboard({ data, swap, login }) {
   }
   const [contactdetails, setcontactdetails] = useState({});
 
-  const [details, setdetails] = useState(true);
+  const [details, setdetails] = useState(false);
   const [contact, setcontact] = useState(false);
+  const [category, setcategory] = useState("");
+  const [search, setsearch] = useState("");
+
   useEffect(() => {
-    if (swap.success == "true") {
-      setdetails(false);
+    if (swap.success != "true") {
+      setdetails(true);
     }
   }, []);
 
@@ -38,6 +43,17 @@ function Dashboard({ data, swap, login }) {
     setcontactdetails(user_array[e]);
   };
   const sendnoti = async (email) => {
+    toast.success("sending swap req!!", {
+      position: "bottom-left",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+
     const res = await fetch("/api/getname", {
       method: "POST",
       headers: {
@@ -68,6 +84,18 @@ function Dashboard({ data, swap, login }) {
 
   return (
     <>
+     <ToastContainer
+        position="bottom-left"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       {contact && (
         <div className="w-screen h-screen bg-black/50 z-50 backdrop-blur-0 flex items-center justify-center absolute   top-0 left-0">
           <div className="text-black bg-white w-[40vw] py-5 px-4 h-80 rounded ">
@@ -104,8 +132,15 @@ function Dashboard({ data, swap, login }) {
               />
             </div>
             <div className="flex justify-center space-x-9 items-center mb-10">
-              <a href={`mailto:${contactdetails.email}`} target="_blank"><SiGmail className="text-red-500 text-xl hover:text-red-600" /></a>
-              <a href={`https://wa.me/${contactdetails.phone}/`} target="_blank"><RiWhatsappFill className="text-green-500 text-xl hover:text-green-600" /></a>
+              <a href={`mailto:${contactdetails.email}`} target="_blank">
+                <SiGmail className="text-red-500 text-xl hover:text-red-600" />
+              </a>
+              <a
+                href={`https://wa.me/${contactdetails.phone}/`}
+                target="_blank"
+              >
+                <RiWhatsappFill className="text-green-500 text-xl hover:text-green-600" />
+              </a>
             </div>
           </div>
         </div>
@@ -115,7 +150,7 @@ function Dashboard({ data, swap, login }) {
         <div
           id="marketing-banner"
           tabIndex={-1}
-          className="fixed z-10 flex my-12 flex-col md:flex-row justify-between w-[calc(100%-2rem)] p-4 -translate-x-1/2 bg-white border border-gray-100 rounded-lg shadow-sm lg:max-w-7xl left-1/2 top-6 dark:bg-gray-700 dark:border-gray-600"
+          className="fixed  mt-16 z-10 flex my-12 flex-col md:flex-row justify-between w-[calc(100%-2rem)] p-4 -translate-x-1/2 bg-white border border-gray-100 rounded-lg shadow-sm lg:max-w-7xl left-1/2 top-6 dark:bg-gray-700 dark:border-gray-600"
         >
           <div className="flex flex-col items-start mb-3 mr-4 md:items-center md:flex-row md:mb-0">
             <a
@@ -148,12 +183,55 @@ function Dashboard({ data, swap, login }) {
         </div>
       )}
 
-      <div className="mt-20">
+      <div className="mt-10">
+        <form>
+          <div className={`flex mt-24 mb-10 md:px-64 mx-2 `}>
+            <label
+              htmlFor="search-dropdown"
+              className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
+            >
+              Your Email
+            </label>
+            <button
+              id="dropdown-button"
+              data-dropdown-toggle="dropdown"
+              className="flex-shrink-0 z-10 inline-flex items-center text-sm font-medium text-center text-gray-900 bg-gray-100 border border-gray-300 rounded-l-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 "
+              type="button"
+            >
+              <select
+                value={category}
+                onChange={(e)=>{setcategory(e.target.value)}}
+                id="countries_disabled"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
+              >
+                <option >Select option</option>
+                <option >roll</option>
+                <option >name</option>
+                <option>semester</option>
+                <option>section</option>
+              </select>
+            </button>
+
+            <div className="relative w-full">
+              <input
+                value={search}
+                onChange={(e)=>{setsearch(e.target.value)}}
+                type="search"
+                id="search-dropdown"
+                className="block p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-r-lg border-l-gray-50 border-l-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500  "
+                placeholder="Search Mockups, Logos, Design Templates..."
+              
+              />
+              
+            </div>
+          </div>
+        </form>
+
         <h1 className="my-4 text-2xl font-bold text-center">All options</h1>
         <hr className="w-[30%] border-2 border-blue-600 mx-auto mb-10" />
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 ">
               <tr>
                 <th scope="col" className="px-6 py-3">
                   Name
@@ -176,16 +254,16 @@ function Dashboard({ data, swap, login }) {
               </tr>
             </thead>
             <tbody>
-              {user_array.map((item, i) => {
+              {Object.values(user_array).filter((item)=>{return search==""||category==""?item:category=="section"?item.section.includes(search) || item.section1.includes(search) || item.section2.includes(search) || item.section3.includes(search)|| item.section4.includes(search):item[category].includes(search)}).map((item,i) => {
                 return (
                   item.section1 !== "empty" && (
                     <tr
-                      key={i}
-                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                      key={item._id}
+                      className="bg-white border-b"
                     >
                       <th
                         scope="row"
-                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap "
                       >
                         {item.name}
                       </th>
