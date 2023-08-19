@@ -5,7 +5,13 @@ const messageSchema = new mongoose.Schema({
         type: String,
 
     },
+    roll: {
+        type: String,
+    },
     email: {
+        type: String,
+    },
+    phone: {
         type: String,
     },
     section: {

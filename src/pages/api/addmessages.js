@@ -4,11 +4,13 @@ const handler = async (req, res) => {
     if (req.method == "POST") {
         
         try {
-            const { name,email,section,message,reciever } = req.body;
-
+            const { name,roll,email,phone,section,message,reciever } = req.body;
+            console.log(name,roll,email,phone,section,message,reciever)
             const m = new Message({
                 name:name,
+                roll:roll,
                 email:email, 
+                phone:phone,
                 section:section,
                 message:message,
                 reciever:reciever

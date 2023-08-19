@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
-function ClientData({ login,response }) {
-
+function ClientData({ login, response }) {
   const router = useRouter();
   const [name, setname] = useState("");
   const [phone, setphone] = useState("");
@@ -17,14 +15,14 @@ function ClientData({ login,response }) {
   const [semester, setsemester] = useState("");
   const [section, setsection] = useState("");
   const [disable, setdisable] = useState(true);
+  const [disp, setdisp] = useState(false);
   useEffect(() => {
-    if(response.msg=="Found"){
-      router.push('http://localhost:3000') 
+    if (response.success) {
+      router.push("http://localhost:3000");
+    } else {
+      setdisp(true);
     }
-    return () => { 
-    }
-  }, [])
-  
+  }, []);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -55,6 +53,17 @@ function ClientData({ login,response }) {
     }
   };
   const submitres = async (e) => {
+    setdisable(true);
+    toast.info("Please wait while your form is submitting..", {
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
     let em = login.user.email;
     e.preventDefault();
 
@@ -78,7 +87,6 @@ function ClientData({ login,response }) {
     });
     let response = await res.json();
 
-
     if (response.success === "true") {
       setname("");
       setroll("");
@@ -90,7 +98,7 @@ function ClientData({ login,response }) {
 
       toast.success("Congrats! Your data is updated..", {
         position: "bottom-left",
-        autoClose: 5000,
+        autoClose: 200,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -99,11 +107,10 @@ function ClientData({ login,response }) {
         theme: "light",
       });
       setTimeout(() => {
-        router.push('http://localhost:3000')
-      }, 1500);
+        window.location = "http://localhost:3000";
+      }, 500);
     }
   };
-
 
   return (
     <>
@@ -119,11 +126,12 @@ function ClientData({ login,response }) {
         pauseOnHover
         theme="light"
       />
+      {disp && (
         <>
-          <h1 className="my-10 text-center text-2xl font-semibold">
-            Enter your details here
+          <h1 className="my-4 text-center text-2xl font-bold text-cente capitalize text-purple-200">
+            Enter Your Details
           </h1>
-          <hr className="w-[40%] mx-auto border-2 border-blue-500" />
+          <hr className="w-[30%] border-2 border-purple-500 mx-auto px-10 mb-10" />
           <form className="w-[50vw] mx-auto my-10" onSubmit={submitres}>
             <div className="relative z-0 w-full mb-6 group">
               <input
@@ -132,15 +140,16 @@ function ClientData({ login,response }) {
                 type="text"
                 name="name"
                 id="floating_name"
-                className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-50  bg-transparent border-0 border-b-2 border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-purple-600 peer"
                 placeholder=" "
                 required=""
               />
               <label
                 htmlFor="floating_name"
-                className="peer-focus:font-medium absolute text-[0.7rem] text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                className="peer-focus:font-medium absolute text-[0.7rem] text-gray-300 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
                 Name
+                <span className="text-red-500 "> *</span>
               </label>
             </div>
             <div className="relative z-0 w-full mb-6 group">
@@ -150,33 +159,33 @@ function ClientData({ login,response }) {
                 type="tel"
                 name="phone"
                 id="floating_phone"
-                className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-                placeholder=" "
+                className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-50  bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-purple-600 peer"
+                placeholder=""
                 required=""
               />
               <label
                 htmlFor="floating_phone"
-                className="peer-focus:font-medium absolute text-[0.7rem] text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                className="peer-focus:font-medium absolute text-[0.7rem] text-gray-300 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
-                Phone number (123-456-7890)
+                Whatsapp Number (123-456-7890){" "}
+                <span className="text-red-500 "> *</span>
               </label>
             </div>
             <div className="relative z-0 w-full mb-6 group">
               <input
                 value={roll}
                 onChange={handleChange}
-                type="number"
+                type="text"
                 name="roll"
-                id="floating_roll"
-                className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-50  bg-transparent border-0 border-b-2 border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-purple-600 peer"
                 placeholder=" "
                 required=""
               />
               <label
                 htmlFor="floating_roll"
-                className="peer-focus:font-medium absolute text-[0.7rem] text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                className="peer-focus:font-medium absolute text-[0.7rem] text-gray-300 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
-                Roll Number
+                Roll Number <span className="text-red-500 "> *</span>
               </label>
             </div>
 
@@ -188,15 +197,15 @@ function ClientData({ login,response }) {
                   type="text"
                   name="branch"
                   id="floating_sem"
-                  className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-50  bg-transparent border-0 border-b-2 border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-purple-600 peer"
                   placeholder=" "
                   required=""
                 />
                 <label
                   htmlFor="floating_sem"
-                  className="peer-focus:font-medium absolute text-[0.7rem] text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="peer-focus:font-medium absolute text-[0.7rem] text-gray-300 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                 >
-                  Branch
+                  Branch <span className="text-red-500 "> *</span>
                 </label>
               </div>
               <div className="relative z-0 w-full mb-6 group">
@@ -205,16 +214,15 @@ function ClientData({ login,response }) {
                   onChange={handleChange}
                   type="text"
                   name="year"
-                  id="floating_last_name"
-                  className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-50  bg-transparent border-0 border-b-2 border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-purple-600 peer"
                   placeholder=" "
                   required=""
                 />
                 <label
                   htmlFor="floating_last_name"
-                  className="peer-focus:font-medium absolute text-[0.7rem] text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="peer-focus:font-medium absolute text-[0.7rem] text-gray-300 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                 >
-                  Year
+                  Year <span className="text-red-500 "> *</span>
                 </label>
               </div>
             </div>
@@ -223,18 +231,17 @@ function ClientData({ login,response }) {
                 <input
                   value={semester}
                   onChange={handleChange}
-                  type="tel"
+                  type="text"
                   name="semester"
-                  id="floating_phone"
-                  className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-50  bg-transparent border-0 border-b-2 border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-purple-600 peer"
                   placeholder=" "
                   required=""
                 />
                 <label
                   htmlFor="floating_phone"
-                  className="peer-focus:font-medium absolute text-[0.7rem] text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="peer-focus:font-medium absolute text-[0.7rem] text-gray-300 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                 >
-                  Semester
+                  Semester <span className="text-red-500 "> *</span>
                 </label>
               </div>
               <div className="relative z-0 w-full mb-6 group">
@@ -243,16 +250,16 @@ function ClientData({ login,response }) {
                   onChange={handleChange}
                   type="text"
                   name="section"
-                  id="floating_company"
-                  className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                  className="block py-2.5 px-0 w-full text-[0.7rem] text-gray-50  bg-transparent border-0 border-b-2 border-gray-300 appearance-none  focus:outline-none focus:ring-0 focus:border-purple-600 peer"
                   placeholder=" "
                   required=""
                 />
                 <label
                   htmlFor="floating_company"
-                  className="peer-focus:font-medium absolute text-[0.7rem] text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  className="peer-focus:font-medium absolute text-[0.7rem] text-gray-300 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-purple-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
                 >
-                  Section (Format: Branch-Number)
+                  Section (Format: Branch-Number){" "}
+                  <span className="text-red-500 "> *</span>
                 </label>
               </div>
             </div>
@@ -260,7 +267,7 @@ function ClientData({ login,response }) {
               <button
                 type="submit"
                 disabled={disable}
-                className="disabled:bg-blue-400 disabled:cursor-not-allowed text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-[0.7rem] w-full [0.7rem]:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                className="disabled:bg-purple-400 disabled:cursor-not-allowed text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-[0.7rem] w-full [0.7rem]:w-auto px-5 py-2.5 text-center"
               >
                 Submit
               </button>
@@ -270,7 +277,7 @@ function ClientData({ login,response }) {
             </p>
           </form>
         </>
-      
+      )}
     </>
   );
 }

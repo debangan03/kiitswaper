@@ -1,16 +1,14 @@
 "use client";
 import React, { useEffect } from "react";
-import { BiSearch } from "react-icons/bi";
-import { BsBell, BsFillBellFill } from "react-icons/bs";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BsHandThumbsUp, BsHandThumbsDown } from "react-icons/bs";
+import { CgMenuGridO, CgClose } from "react-icons/cg";
 
 function LoginNav({ login, data }) {
-  //console.log(data.data);
   let msg_Array = [],
     i;
   if (data) {
@@ -20,12 +18,41 @@ function LoginNav({ login, data }) {
       }
     }
   }
-  //msg_Array.map((item)=>console.log(item.message))
-  const [dropdown, setdropdown] = useState(false);
-  const [open, setopen] = useState(false);
 
-  const accept = async (item) => {
-    let res = await fetch(`/api/updatemessage`, {
+  const [mobile, setmobile] = useState(false);
+  const [notification, setnotification] = useState(false);
+  const [profile, setprofile] = useState(false);
+  const [contact, setcontact] = useState(false);
+  const [swapname, setswapname] = useState("");
+  const [swapsection, setswapsection] = useState("");
+  const [swaproll, setswaproll] = useState("");
+  const [swapemail, setswapemail] = useState("");
+  const [swapphone, setswapphone] = useState("");
+  const [swapreciever, setswapreciever] = useState("");
+
+  const accept = (item) => {
+    setswapname(item.name);
+    setswaproll(item.roll);
+    setswapsection(item.section);
+    setswapphone(item.phone);
+    setswapemail(item.email);
+    setswapreciever(item.reciever);
+    setcontact(true);
+  };
+
+  const reject = async (item) => {
+    toast.warn("Initiating rejection", {
+      position: "bottom-left",
+      autoClose: 200,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+
+    let res = await fetch(`/api/removemessage`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -33,16 +60,44 @@ function LoginNav({ login, data }) {
       body: JSON.stringify({ email: item.email, reciever: item.reciever }),
     });
     let response = await res.json();
-    let res1 = await fetch(`/api/addswapuser`, {
+    if (response.success) {
+      toast.success("Swap request rejected", {
+        position: "bottom-left",
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+      setTimeout(() => {
+        window.location = "http://localhost:3000/";
+      }, 500);
+    }
+  };
+
+  const finalaccept = async (email,reciever) => {
+    toast.info("preparing Swap process", {
+      position: "bottom-left",
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+
+    let res = await fetch(`/api/updatemessage`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email: item.email, reciever: item.reciever }),
+      body: JSON.stringify({ email:email, reciever:reciever }),
     });
-    let response1 = await res1.json();
-    
-    if (response.success && response1.success) {
+    let response = await res.json();
+    if (response.success) {
       toast.success("swap success!!", {
         position: "bottom-left",
         autoClose: 1500,
@@ -51,12 +106,10 @@ function LoginNav({ login, data }) {
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "light",
+        theme: "dark",
       });
       setTimeout(() => {
-        signOut({
-          callbackUrl: process.env.VERCEL_URL || "http://localhost:3000/SwapConfirm",
-        });
+        window.location = "http://localhost:3000/SwapConfirm";
       }, 500);
     }
   };
@@ -78,7 +131,7 @@ function LoginNav({ login, data }) {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      theme: "light",
+      theme: "dark",
     });
     setTimeout(() => {
       signOut({
@@ -86,6 +139,7 @@ function LoginNav({ login, data }) {
       });
     }, 500);
   };
+
   return (
     <>
       <ToastContainer
@@ -100,131 +154,293 @@ function LoginNav({ login, data }) {
         pauseOnHover
         theme="light"
       />
-      {open && (
-        <div className="absolute z-30 top-14 right-16 bg-slate-100 text-blue-500 p-1 rounded">
-          <div>
-            {msg_Array != undefined &&
-              msg_Array.map((item, i) => (
-                <div
-                  key={i}
-                  className="px-4 py-2 text-[#c0e74d] bg-slate-700 m-1 rounded"
-                >
-                  <p
-                    className="px-4 py-2 text-[0.9rem] text-[#c0e74d] bg-slate-700 m-1 rounded"
-                    key={i}
-                  >
-                    {item.message} from {item.name}
-                  </p>
-                  <div className="flex items-center justify-center space-x-4">
-                    <div className="flex items-center justify-center space-x-2  hover:text-green-300 text-green-600 cursor-pointer">
-                      <BsHandThumbsUp className="text-lg " />{" "}
-                      <span className="t" onClick={() => accept(item)}>
-                        Accept
-                      </span>{" "}
-                    </div>
-                    <div className=" flex items-center justify-center space-x-2 hover:text-red-300 text-red-500 cursor-pointer">
-                      <BsHandThumbsDown className="text-lg" />{" "}
-                      <span className="t">reject</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            {nomessage && (
-              <div className="px-4 py-2 text-[#c0e74d] bg-slate-700 m-1 rounded">
-                <p className="px-4 py-2 text-[0.9rem] text-[#c0e74d] bg-slate-700 m-1 rounded">
-                  No Messages Yet
-                </p>
-              </div>
-            )}
+
+      {contact && (
+        <div className="w-screen h-screen bg-black/50 z-30 backdrop-blur-0 flex items-center justify-center fixed   top-0 left-0">
+          <div className="bg-slate-700 w-96 h-fit rounded-xl text-purple-300 p-4">
+            <p className="text-center text-purple-500 font-semibold mb-2">
+              Are you sure you want to accept swap request from
+            </p>
+            <p className="text-justify">Name : {swapname}</p>
+            <p className="text-justify">Section : {swapsection}</p>
+            <p className="text-justify">Roll : {swaproll}</p>
+            <p className="text-justify">Email : {swapemail}</p>
+            <p className="text-justify">Phone : {swapphone}</p>
+            <div className="flex items-center justify-center space-x-10 mt-2">
+              <svg
+                onClick={()=>finalaccept(swapemail,swapreciever)}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                className="text-green-600 w-8 h-8 cursor-pointer hover:scale-95 "
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <svg
+                onClick={()=>setcontact(false)}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                className="text-red-500 w-8 h-8 cursor-pointer hover:scale-95"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+
+              {/* <SiNike className="text-green-600 text-3xl" />
+              <RxCross2 className="text-red-500 text-3xl" /> */}
+            </div>
           </div>
         </div>
       )}
-      <nav
-        onClick={() => {
-          setdropdown(false);
-        }}
-        className="relative flex md:pr-10 flex-wrap items-center justify-between bg-[#FBFBFB] py-2 text-neutral-500 shadow-lg focus:text-neutral-700 dark:bg-neutral-600 lg:py-4"
-      >
-        <div className="md:flex w-full flex-wrap items-center justify-between px-3">
-          <Link className="ml-2 text-xl text-neutral-800" href={"/"}>
-            KIIT-Swapper
-          </Link>
-          <div className="ml-5 flex w-[90%] md:w-[30%] items-center justify-between">
-            {/* <input
-              type="search"
-              className="relative m-0 block w-[1px] min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-neutral-700 outline-none transition duration-200 ease-in-out focus:z-[3] focus:border-primary focus:text-neutral-700 focus:shadow-[inset_0_0_0_1px_rgb(59,113,202)] focus:outline-none motion-reduce:transition-none "
-              placeholder="Search"
-              aria-label="Search"
-              aria-describedby="button-addon2"
-            /> */}
-            {/*Search icon*/}
-            <div className="flex mx-auto items-center md:mx-0 md:ml-auto space-x-3">
-              {/* <span
-                className="input-group-text flex items-center whitespace-nowrap rounded px-3 py-1.5 text-center font-normal text-2xl text-neutral-700 dark:text-neutral-200"
-                id="basic-addon2"
-              >
-                <BiSearch />
-              </span> */}
-              {open && (
-                <span
-                  className="input-group-text z-40 flex items-center whitespace-nowrap rounded px-3 py-1.5 text-center font-normal text-2xl text-neutral-700 dark:text-neutral-200"
-                  id="basic-addon2"
-                  onClick={() => {
-                    setopen(false);
-                  }}
-                >
-                  <BsBell />
-                </span>
-              )}
-              {!open && (
-                <span
-                  className="input-group-text z-40 flex items-center whitespace-nowrap rounded px-3 py-1.5 text-center font-normal text-2xl text-neutral-700 dark:text-neutral-200"
-                  id="basic-addon2"
-                  onClick={() => {
-                    setopen(true);
-                    setdropdown(false);
-                  }}
-                >
-                  <BsFillBellFill />
-                </span>
-              )}
 
-              {/* <span className='text-3xl'>
-                        <MdAccountCircle/>
-                        </span> */}
-              {/* <Signout/> */}
-              {/* <VscAccount className='text-2xl' onMouseOver={()=>setdropdown(true)}/> */}
-              <img
-                src={login.user.image}
-                className="rounded-full w-8 h-8 absolute top-4  right-2 whitespace-nowrap z-50 "
-                onMouseOver={() => {
-                  setdropdown(true);
-                  setopen(false);
-                }}
-              />
-            </div>
-            {dropdown && (
-              <div
-                onMouseLeave={() => setdropdown(false)}
-                className="w-30 p-2 bg-slate-200 z-30 h-fit absolute top-[49px] right-5 text-[0.8rem] font-semibold rounded-md"
+      <nav className="bg-slate-950 shadow-xl shadow-slate-800 sticky top-0 py-2 z-30">
+        <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+          <div className="relative flex h-16 items-center justify-between">
+            <div
+              className="absolute inset-y-0 left-0 flex items-center sm:hidden"
+              onClick={() => {
+                setmobile(!mobile);
+                setnotification(false);
+                setprofile(false);
+              }}
+            >
+              <button
+                type="button"
+                className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                aria-controls="mobile-menu"
+                aria-expanded="false"
               >
-                <ul>
-                  <Link href={"/Accounts"}>
-                    <li className=" hover:text-blue-700 cursor-pointer">
-                      My Account
-                    </li>
-                  </Link>
-                  <li
-                    className="mt-2  hover:text-blue-700 cursor-pointer"
-                    onClick={logout}
+                <span className="absolute -inset-0.5" />
+                <span className="sr-only">Open main menu</span>
+
+                {!mobile && <CgMenuGridO className="text-xl text-white" />}
+                {mobile && <CgClose className="text-xl text-white" />}
+
+                <svg
+                  className="hidden h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+              <Link href={"/"} className="flex flex-shrink-0 items-center">
+                <h1 className="text-gray-200 hover:text-purple-500 font-semibold text-xl hover:scale-95 cursor-pointer">
+                  KIIT Swapper
+                </h1>
+              </Link>
+              <div className="hidden sm:ml-6 sm:block">
+                <div className="flex items-center space-x-4">
+                  <Link
+                    href={"/"}
+                    className="text-gray-300 hover:scale-95 hover:text-purple-500 rounded-md px-3 py-2 text-[1rem] font-medium"
                   >
-                    Log Out
-                  </li>
-                </ul>
+                    About
+                  </Link>
+                  <Link
+                    href={"/"}
+                    className="text-gray-300 hover:scale-95 hover:text-purple-500 rounded-md px-3 py-2 text-[1rem] font-medium"
+                  >
+                    Manual
+                  </Link>
+                  <Link
+                    href={"/"}
+                    className="text-gray-300 hover:scale-95 hover:text-purple-500 rounded-md px-3 py-2 text-[1rem] font-medium"
+                  >
+                    Feedback
+                  </Link>
+                </div>
               </div>
-            )}
+            </div>
+            <div className="absolute space-x-4 inset-y-0 z-50 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+              <button
+                onClick={() => {
+                  setnotification(!notification);
+                  setprofile(false);
+                }}
+                type="button"
+                className="hover:scale-95  relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-offset-2 focus:ring-offset-gray-800"
+              >
+                <span className="absolute -inset-1.5" />
+                <span className="sr-only">View notifications</span>
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                  />
+                </svg>
+              </button>
+
+              <div className="relative ml-3">
+                <div>
+                  <button
+                    onClick={() => {
+                      setnotification(false);
+                      setprofile(!profile);
+                    }}
+                    type="button"
+                    className="relative hover:scale-95 flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-purple-800 focus:ring-offset-2 focus:ring-offset-gray-800"
+                    id="user-menu-button"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                  >
+                    <span className="absolute -inset-1.5" />
+                    <span className="sr-only">Open user menu</span>
+                    <img
+                      className="h-8 w-8 rounded-full"
+                      src={login.user.image}
+                      alt="dp"
+                    />
+                  </button>
+                </div>
+
+                {profile && (
+                  <div
+                    onMouseLeave={() => {
+                      setprofile(false);
+                    }}
+                    className="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-slate-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="user-menu-button"
+                    tabIndex={-1}
+                  >
+                    <Link
+                      href={"/Accounts"}
+                      className="block px-4 py-2 text-sm cursor-pointer text-purple-500 hover:text-purple-300"
+                      role="menuitem"
+                      id="user-menu-item-0"
+                    >
+                      Your Profile
+                    </Link>
+                    <Link
+                      href="#"
+                      className="block px-4 py-2 text-sm cursor-pointer text-purple-500 hover:text-purple-300"
+                      role="menuitem"
+                      tabIndex={-1}
+                      id="user-menu-item-1"
+                    >
+                      Swap History
+                    </Link>
+                    <span
+                      className="block px-4 py-2 text-sm text-purple-500 hover:text-purple-300 cursor-pointer"
+                      role="menuitem"
+                      tabIndex={-1}
+                      id="user-menu-item-2"
+                      onClick={logout}
+                    >
+                      Sign out
+                    </span>
+                  </div>
+                )}
+                {notification && (
+                  <div
+                    onMouseLeave={() => setnotification(false)}
+                    className="absolute right-10 z-50  mt-2 w-48 md:w-64 origin-top-right rounded-md bg-slate-900 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="user-menu-button"
+                    tabIndex={-1}
+                  >
+                    <div>
+                      {msg_Array != undefined &&
+                        msg_Array.map((item, i) => (
+                          <div
+                            key={i}
+                            className=" px-2 text-purple-500 bg-slate-700 m-1 rounded"
+                          >
+                            <p
+                              className="px-2 text-[0.9rem] text-purple-500  bg-transparent m-1 rounded"
+                              key={i}
+                            >
+                              {item.message} from {item.name}
+                            </p>
+                            <div className="flex items-center justify-center space-x-4">
+                              <div
+                                onClick={() => accept(item)}
+                                className="flex items-center justify-center space-x-1  hover:text-green-500 hover:scale-105 text-green-600 cursor-pointer"
+                              >
+                                <BsHandThumbsUp className="text-lg " />{" "}
+                                <span className="t">Accept</span>{" "}
+                              </div>
+                              <div
+                                onClick={() => reject(item)}
+                                className=" flex items-center justify-center space-x-2 hover:text-red-400 hover:scale-105 text-red-500 cursor-pointer"
+                              >
+                                <BsHandThumbsDown className="text-lg" />{" "}
+                                <span className="t">reject</span>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      {nomessage && (
+                        <div className="p-2 mx-1 text-purple-500  bg-slate-800 rounded">
+                          <p className="text-[0.9rem] text-purple-500 rounded text-center">
+                            No Messages Yet
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
+
+        {mobile && (
+          <div className="sm:hidden" id="mobile-menu">
+            <div className="space-y-1 px-2 pb-3 pt-2">
+              <Link
+                href={"/"}
+                className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+              >
+                About
+              </Link>
+              <Link
+                href={"/"}
+                className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+              >
+                Manual
+              </Link>
+              <Link
+                href={"/"}
+                className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium"
+              >
+                Feedback
+              </Link>
+            </div>
+          </div>
+        )}
       </nav>
     </>
   );

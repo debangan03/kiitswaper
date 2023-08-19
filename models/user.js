@@ -60,7 +60,10 @@ const userSchema = new mongoose.Schema({
         default:"empty",
 
     },
-    
+    swapstatus:{
+        type:Boolean,
+        default:false,
+    }
 
 
 }, { timestamps: true })
