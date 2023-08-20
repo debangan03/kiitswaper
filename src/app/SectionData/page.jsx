@@ -1,4 +1,3 @@
-import React from 'react'
 import UpdateData from './UpdateData'
 import { getServerSession } from 'next-auth'
 
