@@ -13,12 +13,12 @@ const handler = async (req, res) => {
           },
         ],
       });
-      let i,
-        updatestatus = [];
-      for (i in data) {
-        updatestatus[i] = await Message.findByIdAndDelete(data[i]._id);
+ 
+      if (data.length>0) {
+        res.status(201).json({ success: true ,data});
+      } else {
+        res.status(201).json({ success: false,data });
       }
-      res.status(201).json({ success: true });
     } catch (error) {
       res.status(500).send({ success: false, error: error });
     }

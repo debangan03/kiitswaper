@@ -42,22 +42,22 @@ const userSchema = new mongoose.Schema({
     },
     section1: {
         type: String,
-        default:"empty",
+        default:"EMPTY",
 
     },
     section2: {
         type: String,
-        default:"empty",
+        default:"EMPTY",
 
     },
     section3: {
         type: String,
-        default:"empty",
+        default:"EMPTY",
 
     },
     section4: {
         type: String,
-        default:"empty",
+        default:"EMPTY",
 
     },
     swapstatus:{

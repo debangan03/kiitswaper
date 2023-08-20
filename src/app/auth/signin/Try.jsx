@@ -1,6 +1,5 @@
 // import React from "react";
 import { getProviders } from "next-auth/react";
-import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Login from "./Login";
 import img from "../../Images/icons.png";

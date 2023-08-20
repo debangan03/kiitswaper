@@ -72,10 +72,10 @@ function ClientData({ login, response }) {
       phone: phone,
       email: em,
       roll: roll,
-      branch: branch,
+      branch: branch.toUpperCase(),
       year: year,
       semester: semester,
-      section: section,
+      section: section.toUpperCase(),
     };
 
     let res = await fetch(`/api/addUser`, {

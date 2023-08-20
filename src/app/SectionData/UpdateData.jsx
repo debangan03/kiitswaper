@@ -9,9 +9,9 @@ function UpdateData({ login }) {
   const router = useRouter();
   const [section, setsection] = useState("");
   const [section1, setsection1] = useState("");
-  const [section2, setsection2] = useState("empty");
-  const [section3, setsection3] = useState("empty");
-  const [section4, setsection4] = useState("empty");
+  const [section2, setsection2] = useState("EMPTY");
+  const [section3, setsection3] = useState("EMPTY");
+  const [section4, setsection4] = useState("EMPTY");
   const [disable, setdisable] = useState(true);
 
   const handleChange = (e) => {
@@ -42,21 +42,21 @@ function UpdateData({ login }) {
     let email = login.user.email;
 
     if (!section2) {
-      setsection2("empty");
+      setsection2("EMPTY");
     }
     if (!section3) {
-      setsection3("empty");
+      setsection3("EMPTY");
     }
     if (!section4) {
-      setsection4("empty");
+      setsection4("EMPTY");
     }
     const data = {
       email: email,
-      section: section,
-      section1: section1,
-      section2: section2,
-      section3: section3,
-      section4: section4,
+      section: section.toUpperCase(),
+      section1: section1.toUpperCase(),
+      section2: section2.toUpperCase(),
+      section3: section3.toUpperCase(),
+      section4: section4.toUpperCase(),
     };
     console.log(data);
 
@@ -72,9 +72,9 @@ function UpdateData({ login }) {
     if (response.success === "true") {
       setsection("");
       setsection1("");
-      setsection2("empty");
-      setsection3("empty");
-      setsection4("empty");
+      setsection2("EMPTY");
+      setsection3("EMPTY");
+      setsection4("EMPTY");
 
       toast.success("Congrats! Your data for section swap is updated..", {
         position: "bottom-left",

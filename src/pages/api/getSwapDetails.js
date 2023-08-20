@@ -5,7 +5,7 @@ const handler = async (req, res) => {
         
         try {
             const users=await User.findOne({email:req.body.email})
-            if(users.section1!="empty"){
+            if(users.section1!="EMPTY" || users.swapstatus==true){
                 
                 res.status(200).json({success:"true",msg:"Found"})
             }

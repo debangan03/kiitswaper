@@ -17,8 +17,8 @@ const handler = async (req, res) => {
             const s2=new SwappedUsers({name:data1[1].name,roll:data1[1].roll,email:data1[1].email,oldsection:data1[1].section,newsection:data1[0].section,swapbuddy:data1[0].email});
             const t1=await s1.save();
             const t2=await s2.save();
-            const c1=await User.findOneAndUpdate({email:data1[0].email},{section:data1[1].section,section1:"empty",section2:"empty",section3:"empty",section4:"empty",swapstatus:true});
-            const c2=await User.findOneAndUpdate({email:data1[1].email},{section:data1[0].section,section1:"empty",section2:"empty",section3:"empty",section4:"empty",swapstatus:true});           
+            const c1=await User.findOneAndUpdate({email:data1[0].email},{section:data1[1].section,section1:"EMPTY",section2:"EMPTY",section3:"EMPTY",section4:"EMPTY",swapstatus:true});
+            const c2=await User.findOneAndUpdate({email:data1[1].email},{section:data1[0].section,section1:"EMPTY",section2:"EMPTY",section3:"EMPTY",section4:"EMPTY",swapstatus:true});           
             res.status(201).json({success:true});
         } catch (error) {
             res.status(500).send({success:false, error: error });

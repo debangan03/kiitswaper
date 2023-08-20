@@ -7,6 +7,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BsHandThumbsUp, BsHandThumbsDown } from "react-icons/bs";
 import { CgMenuGridO, CgClose } from "react-icons/cg";
+import { GoIssueClosed } from "react-icons/go";
+import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 function LoginNav({ login, data }) {
   let msg_Array = [],
@@ -22,13 +25,16 @@ function LoginNav({ login, data }) {
   const [mobile, setmobile] = useState(false);
   const [notification, setnotification] = useState(false);
   const [profile, setprofile] = useState(false);
-  const [contact, setcontact] = useState(false);
+  const [acceptreq, setacceptreq] = useState(false);
   const [swapname, setswapname] = useState("");
   const [swapsection, setswapsection] = useState("");
   const [swaproll, setswaproll] = useState("");
   const [swapemail, setswapemail] = useState("");
   const [swapphone, setswapphone] = useState("");
   const [swapreciever, setswapreciever] = useState("");
+  const [getsure, setgetsure] = useState(false);
+  const [sure, setsure] = useState(false);
+  const [view, setview] = useState(false);
 
   const accept = (item) => {
     setswapname(item.name);
@@ -37,13 +43,13 @@ function LoginNav({ login, data }) {
     setswapphone(item.phone);
     setswapemail(item.email);
     setswapreciever(item.reciever);
-    setcontact(true);
+    setacceptreq(true);
   };
 
-  const reject = async (item) => {
-    toast.warn("Initiating rejection", {
+  const reject = async (email, reciever) => {
+    toast.info("Initiating rejection", {
       position: "bottom-left",
-      autoClose: 200,
+      autoClose: 500,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -57,7 +63,7 @@ function LoginNav({ login, data }) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email: item.email, reciever: item.reciever }),
+      body: JSON.stringify({ email: email, reciever: reciever }),
     });
     let response = await res.json();
     if (response.success) {
@@ -77,7 +83,7 @@ function LoginNav({ login, data }) {
     }
   };
 
-  const finalaccept = async (email,reciever) => {
+  const finalaccept = async (email, reciever) => {
     toast.info("preparing Swap process", {
       position: "bottom-left",
       autoClose: 1500,
@@ -94,7 +100,7 @@ function LoginNav({ login, data }) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email:email, reciever:reciever }),
+      body: JSON.stringify({ email: email, reciever: reciever }),
     });
     let response = await res.json();
     if (response.success) {
@@ -139,6 +145,7 @@ function LoginNav({ login, data }) {
       });
     }, 500);
   };
+  const [ok, setok] = useState(true);
 
   return (
     <>
@@ -155,52 +162,74 @@ function LoginNav({ login, data }) {
         theme="light"
       />
 
-      {contact && (
+      {acceptreq && (
         <div className="w-screen h-screen bg-black/50 z-30 backdrop-blur-0 flex items-center justify-center fixed   top-0 left-0">
-          <div className="bg-slate-700 w-96 h-fit rounded-xl text-purple-300 p-4">
-            <p className="text-center text-purple-500 font-semibold mb-2">
-              Are you sure you want to accept swap request from
-            </p>
-            <p className="text-justify">Name : {swapname}</p>
-            <p className="text-justify">Section : {swapsection}</p>
-            <p className="text-justify">Roll : {swaproll}</p>
-            <p className="text-justify">Email : {swapemail}</p>
-            <p className="text-justify">Phone : {swapphone}</p>
-            <div className="flex items-center justify-center space-x-10 mt-2">
-              <svg
-                onClick={()=>finalaccept(swapemail,swapreciever)}
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                className="text-green-600 w-8 h-8 cursor-pointer hover:scale-95 "
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <svg
-                onClick={()=>setcontact(false)}
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                className="text-red-500 w-8 h-8 cursor-pointer hover:scale-95"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+          <div className="relative p-4">
+            <IoIosCloseCircleOutline
+              onClick={() => setacceptreq(false)}
+              className="absolute top-0 right-0 text-2xl text-purple-500 hover:text-red-500"
+            />
 
-              {/* <SiNike className="text-green-600 text-3xl" />
+            {ok && (
+              <div className="bg-slate-700 w-[340px]  h-fit rounded-xl text-purple-300 p-4">
+                <p className="text-center hidden lg:block text-purple-500 font-semibold mb-2">
+                  You have a swap request from
+                </p>
+                <p className="text-justify">Name : {swapname}</p>
+                <p className="text-justify">Section : {swapsection}</p>
+                <p className="text-justify">Roll : {swaproll}</p>
+                <p className="text-justify">Email : {swapemail}</p>
+                <p className="text-justify">Phone : {swapphone}</p>
+                {!getsure && (
+                  <div className="flex items-center  justify-center space-x-10 mt-2">
+                    <button
+                      onClick={() => setgetsure(true)}
+                      className="text-green-500  capitalize bg-black/20 rounded-md hover:text-green-400 px-3 py-1"
+                    >
+                      Swap
+                    </button>
+                    <button
+                      onClick={() => reject(swapemail, swapreciever)}
+                      className="text-red-600 capitalize bg-black/20 rounded-md hover:text-red-500 px-3 py-1"
+                    >
+                      reject
+                    </button>
+                  </div>
+                )}
+                {getsure && (
+                  <div>
+                    <div className="flex items-center mt-1">
+                      <input
+                        id="link-checkbox"
+                        onChange={()=>setsure(!sure)}
+                        type="checkbox"
+                        defaultValue=""
+                        className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                      />
+                      <label
+                        htmlFor="link-checkbox"
+                        
+                        className="ml-2 text-sm font-medium text-gray-300 "
+                      >
+                        I hereby declare that I want to swap section with {swapname}{" "}({swaproll})
+                        
+                      </label>
+                    </div>
+                    {sure && <div className="flex justify-center items-center mt-2">
+                    <button
+                      onClick={() => finalaccept(swapemail,swapreciever)}
+                      className="text-green-500 mx-auto capitalize bg-black/20 rounded-md hover:text-green-400 px-3 py-1"
+                    >Confirm swap
+                      
+                    </button>
+                    </div>}
+                  </div>
+                )}
+
+                {/* <SiNike className="text-green-600 text-3xl" />
               <RxCross2 className="text-red-500 text-3xl" /> */}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -376,15 +405,23 @@ function LoginNav({ login, data }) {
                         msg_Array.map((item, i) => (
                           <div
                             key={i}
-                            className=" px-2 text-purple-500 bg-slate-700 m-1 rounded"
+                            className=" px-2 hover:scale-105 text-purple-500 bg-slate-700 m-1 rounded flex items-center justify-between"
                           >
                             <p
                               className="px-2 text-[0.9rem] text-purple-500  bg-transparent m-1 rounded"
+                              
                               key={i}
                             >
                               {item.message} from {item.name}
                             </p>
-                            <div className="flex items-center justify-center space-x-4">
+                            <span
+                              className="text-purple-50 text-xl hover:text-teal-500"
+                              
+                              onClick={() =>{accept(item)}}
+                            >
+                              <AiOutlineEye />
+                            </span>
+                            {/* <div className="flex items-center justify-center space-x-4">
                               <div
                                 onClick={() => accept(item)}
                                 className="flex items-center justify-center space-x-1  hover:text-green-500 hover:scale-105 text-green-600 cursor-pointer"
@@ -399,7 +436,7 @@ function LoginNav({ login, data }) {
                                 <BsHandThumbsDown className="text-lg" />{" "}
                                 <span className="t">reject</span>
                               </div>
-                            </div>
+                            </div> */}
                           </div>
                         ))}
                       {nomessage && (

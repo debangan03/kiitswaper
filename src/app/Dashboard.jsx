@@ -2,15 +2,21 @@
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { useState } from "react";
-import { GiCancel } from "react-icons/Gi";
-import { SiGmail } from "react-icons/Si";
-import { RiWhatsappFill } from "react-icons/ri";
+import { HiOutlineMail } from "react-icons/hi";
+import { IoIosCloseCircleOutline } from "react-icons/io";
+import { LiaWhatsapp } from "react-icons/lia";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Dashboard({ data, swap, login }) {
   const user_array = [];
-  let i, j;
+  let i, j,k;
+  const [ursec, setursec] = useState("")
+  const [ursec1, setursec1] = useState("")
+  const [ursec2, setursec2] = useState("")
+  const [ursec3, setursec3] = useState("")
+  const [ursec4, setursec4] = useState("")
+  const [urstatus, seturstatus] = useState(false)
   let dis = false;
   for (i in data) {
     if (data[i].email != login.user.email) {
@@ -21,6 +27,18 @@ function Dashboard({ data, swap, login }) {
     if (data[j].email == login.user.email && data[j].section1 == "empty") {
       dis = true;
     }
+  }
+  const secdetail=()=>{
+  for (k in data) {
+    if (data[k].email == login.user.email) {
+      setursec(data[k].section)
+      setursec1(data[k].section1)
+      setursec2(data[k].section2)
+      setursec3(data[k].section3)
+      setursec4(data[k].section4)
+      seturstatus(data[k].swapstatus)
+    }
+  }
   }
   const [contactdetails, setcontactdetails] = useState({});
 
@@ -33,6 +51,7 @@ function Dashboard({ data, swap, login }) {
     if (swap.success != "true") {
       setdetails(true);
     }
+    secdetail();
   }, []);
 
   let name;
@@ -43,76 +62,101 @@ function Dashboard({ data, swap, login }) {
     setcontactdetails(user_array[e]);
   };
   const sendnoti = async (email) => {
-    const allow = await fetch("/api/getname", {
+    const singlemsgchk = await fetch("/api/checkmessage", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email: email }),
+      body: JSON.stringify({ email: email, reciever: login.user.email }),
     });
-    const allowswap = await allow.json();
-    const res = await fetch("/api/getname", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: login.user.email }),
-    });
-    const response = await res.json();
-    if (
-      (allowswap.user.section1 == response.user.section ||
-        allowswap.user.section2 == response.user.section ||
-        allowswap.user.section3 == response.user.section ||
-        allowswap.user.section4 == response.user.section) &&
-      (response.user.section1 == allowswap.user.section ||
-        response.user.section2 == allowswap.user.section ||
-        response.user.section3 == allowswap.user.section ||
-        response.user.section4 == allowswap.user.section)
-    ) {
-      toast.success("sending swap req!!", {
-        position: "bottom-left",
-        autoClose: 1500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
-      });
-
-      name = response.user.name;
-      section = response.user.section;
-      const data = {
-        name: name,
-        roll: response.user.roll,
-        email: login.user.email,
-        phone: response.user.phone,
-        section: section,
-        reciever: email,
-        message: "hi ! you have one swap request",
-      };
-      const res1 = await fetch("/api/addmessages", {
+    const singlemsg = await singlemsgchk.json();
+    console.log("Msg check : ", singlemsg)
+    if (singlemsg.success) {
+      toast.info(
+        "You have already sent a request or you have a pending request from this person.",
+        {
+          position: "top-center",
+          autoClose: 5500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        }
+      );
+    } else {
+      const allow = await fetch("/api/getname", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ email: email }),
       });
-      const response1 = await res1.json();
-    }
-    else
-    {
-      toast.warn("You are not allowed to send swap request due to mismatch of section!!", {
-        position: "top-center",
-        autoClose: 5500,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "dark",
+      const allowswap = await allow.json();
+      const res = await fetch("/api/getname", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: login.user.email }),
       });
-      
+      const response = await res.json();
+      if (
+        (allowswap.user.section1 == response.user.section ||
+          allowswap.user.section2 == response.user.section ||
+          allowswap.user.section3 == response.user.section ||
+          allowswap.user.section4 == response.user.section) &&
+        (response.user.section1 == allowswap.user.section ||
+          response.user.section2 == allowswap.user.section ||
+          response.user.section3 == allowswap.user.section ||
+          response.user.section4 == allowswap.user.section)
+      ) {
+        toast.success("sending swap req!!", {
+          position: "bottom-left",
+          autoClose: 1500,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+
+        name = response.user.name;
+        section = response.user.section;
+        const data = {
+          name: name,
+          roll: response.user.roll,
+          email: login.user.email,
+          phone: response.user.phone,
+          section: section,
+          reciever: email,
+          message: "hi ! you have one swap request",
+        };
+        const res1 = await fetch("/api/addmessages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        const response1 = await res1.json();
+      } else {
+        toast.warn(
+          "You are not allowed to send swap request due to mismatch of section!!",
+          {
+            position: "top-center",
+            autoClose: 5500,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          }
+        );
+      }
     }
   };
 
@@ -132,53 +176,37 @@ function Dashboard({ data, swap, login }) {
       />
       {contact && (
         <div className="w-screen h-screen bg-black/50 z-30 backdrop-blur-0 flex items-center justify-center fixed   top-0 left-0">
-          <div className="text-black bg-white w-[40vw] py-5 px-4 h-80 rounded ">
-            <div className="flex justify-between  ">
-              <div className="">
-                <h1 className="text-center text-xl font-bold ">
-                  Contact your swap partner
-                </h1>
-                <hr className="w-[40%] mx-auto border-2 border-emerald-500 rounded my-2" />
-                <div className="px-10 py-10">
-                  <ul className="mt-5 font-semibold px-20 py-30">
-                    <li className="my-2">Name : {contactdetails.name}</li>
-                    <a href={`tel:${contactdetails.phone}`} target="_blank">
-                      <li className="my-2">Phone : {contactdetails.phone}</li>
-                    </a>
-                    <a
-                      href={`https://wa.me/${contactdetails.phone}/`}
-                      target="_blank"
-                    >
-                      <li className="my-2">
-                        Whats app : {contactdetails.phone}
-                      </li>
-                    </a>
+          <div className="relative p-4">
+            <IoIosCloseCircleOutline
+              onClick={() => setcontact(false)}
+              className="absolute top-0 right-0 text-2xl text-purple-500 hover:text-red-500"
+            />
 
-                    <a href={`mailto:${contactdetails.email}`} target="_blank">
-                      <li className="my-2">Email : {contactdetails.email}</li>
-                    </a>
-                  </ul>
+            {contactdetails && (
+              <div className="bg-slate-700 w-[340px]  h-fit rounded-xl text-purple-300 p-4">
+                <p className="text-center hidden lg:block text-purple-500 font-semibold mb-2">
+                  You have a swap request from
+                </p>
+                <p className="text-justify">Name : {contactdetails.name}</p>
+                <p className="text-justify">
+                  Section : {contactdetails.section}
+                </p>
+                <p className="text-justify">Roll : {contactdetails.roll}</p>
+                <p className="text-justify">Email : {contactdetails.email}</p>
+                <p className="text-justify">Phone : {contactdetails.phone}</p>
+                <div className="flex items-center justify-center space-x-10 mt-2">
+                  <LiaWhatsapp className="text-2xl text-green-500" />
+                  <HiOutlineMail className="text-2xl text-red-500 " />
+
+                  {/* <SiNike className="text-green-600 text-3xl" />
+              <RxCross2 className="text-red-500 text-3xl" /> */}
                 </div>
               </div>
-              <GiCancel
-                className="text-xl text-red-400 hover:text-red-600  cursor-pointer"
-                onClick={() => setcontact(false)}
-              />
-            </div>
-            <div className="flex justify-center space-x-9 items-center mb-10">
-              <a href={`mailto:${contactdetails.email}`} target="_blank">
-                <SiGmail className="text-red-500 text-xl hover:text-red-600" />
-              </a>
-              <a
-                href={`https://wa.me/${contactdetails.phone}/`}
-                target="_blank"
-              >
-                <RiWhatsappFill className="text-green-500 text-xl hover:text-green-600" />
-              </a>
-            </div>
+            )}
           </div>
         </div>
       )}
+
       {details && (
         <div
           id="marketing-banner"
@@ -199,7 +227,28 @@ function Dashboard({ data, swap, login }) {
           </div>
         </div>
       )}
-      {details && <div className="h-20 md:h-2" />}
+
+        {!details &&
+        <div
+        id="marketing-banner"
+        tabIndex={-1}
+        className="fixed mt-20 z-10 flex my-12 flex-col md:flex-row md:px-10 px-4 justify-between w-[calc(100%-2rem)] p-2 -translate-x-1/2 bg-slate-800 shadow-inner shadow-slate-950  rounded-lg lg:max-w-7xl left-1/2 top-10"
+      >
+        {urstatus && <p className="flex items-center text-sm font-normal test-[0.8rem] text-center text-purple-100">
+          Congratulations!!!!  You have successfully swapped your section. Have a good sem ahead.
+        </p>}
+        <p className="flex capitalize items-center text-sm font-normal test-[0.8rem] text-center text-purple-100">
+          Your current section : {ursec} 
+        </p>
+        
+       {!urstatus && <p className="flex capitalize items-center text-sm font-normal test-[0.8rem] text-center text-gray-100">
+          Your section preferences : {ursec1!="EMPTY"&&ursec1}  {ursec2!="EMPTY"&&`/ ${ursec2}`}  {ursec3!="EMPTY"&&`/ ${ursec3}`}  {ursec4!="EMPTY"&&`/ ${ursec4}`}
+        </p>}
+
+        
+      </div>}
+
+      <div className="h-10 md:h-3" />
 
       <div className="mt-10 mx-4">
         <form>
@@ -285,16 +334,18 @@ function Dashboard({ data, swap, login }) {
                     category == "Select option"
                     ? item
                     : category == "section"
-                    ? item.section.includes(search) ||
-                      item.section1.includes(search) ||
-                      item.section2.includes(search) ||
-                      item.section3.includes(search) ||
-                      item.section4.includes(search)
-                    : item[category].includes(search);
+                    ? item.section.includes(search.toUpperCase()) ||
+                      item.section1.includes(search.toUpperCase()) ||
+                      item.section2.includes(search.toUpperCase()) ||
+                      item.section3.includes(search.toUpperCase()) ||
+                      item.section4.includes(search.toUpperCase())
+                    : item[category]
+                        .toUpperCase()
+                        .includes(search.toUpperCase());
                 })
                 .map((item, i) => {
                   return (
-                    item.section1 !== "empty" && (
+                    item.section1 !== ("EMPTY" || "empty") && (
                       <tr
                         key={item._id}
                         className="bg-slate-800 border-b-[1px] rounded-b-sm border-purple-400"
@@ -313,16 +364,16 @@ function Dashboard({ data, swap, login }) {
                           {item.phone}
                         </td>
                         <td className="px-6 py-4 text-gray-50 ">
-                          {item.section1 !== "empty" && (
+                          {item.section1 !== "EMPTY" && (
                             <span>{item.section1}</span>
                           )}
-                          {item.section2 !== "empty" && (
+                          {item.section2 !== "EMPTY" && (
                             <span>/ {item.section2}</span>
                           )}{" "}
-                          {item.section3 !== "empty" && (
+                          {item.section3 !== "EMPTY" && (
                             <span>/ {item.section3}</span>
                           )}{" "}
-                          {item.section4 !== "empty" && (
+                          {item.section4 !== "EMPTY" && (
                             <span>/ {item.section4}</span>
                           )}
                         </td>
